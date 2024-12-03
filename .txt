@@ -1,0 +1,302 @@
+public class DeluxPizza extends Pizza {
+    public DeluxPizza(boolean veg, Size size) {
+        super(veg, size);
+        super.addExtraCheese();
+        super.addExtraToppings();
+    }
+
+    @Override
+    public void addExtraCheese() {
+    }
+
+    @Override
+    public void addExtraToppings() {
+    }
+}
+
+
+public class Main {
+    public static void main(String[] args) {
+        Pizza basePizza = new Pizza(false, Pizza.Size.LARGE);
+        basePizza.addExtraToppings();
+        basePizza.addExtraCheese();
+        basePizza.takeAway();
+        basePizza.getBill();
+
+        System.out.println();
+
+        DeluxPizza deluxePizza = new DeluxPizza(false, Pizza.Size.MEDIUM);
+        deluxePizza.takeAway();
+        deluxePizza.getBill();
+    }
+}
+
+
+public class Pizza {
+    private int price;
+    private boolean veg, isExtraCheeseAdded = false, isExtraToppingsAdded = false, isOptedForTakeAway = false;
+    private int extraCheesePrice = 100;
+    private int extraToppings = 150;
+    private int bagPack = 20;
+    private int basePizzaPrice;
+    private int sizePrice = 0;
+    private static final int DISCOUNT_THRESHOLD = 700;
+    private static final int DISCOUNT_AMOUNT = 100;
+
+    public enum Size {
+        SMALL, MEDIUM, LARGE
+    }
+
+    private Size size;
+
+    public Pizza(boolean veg, Size size) {
+        this.veg = veg;
+        this.size = size;
+
+        if (this.veg) {
+            this.price = 300;
+        } else {
+            this.price = 400;
+        }
+
+        this.basePizzaPrice = this.price;
+        setSizePrice(size);
+    }
+
+    private void setSizePrice(Size size) {
+        switch (size) {
+            case SMALL:
+                sizePrice = 0;
+                break;
+            case MEDIUM:
+                sizePrice = 50;
+                break;
+            case LARGE:
+                sizePrice = 100;
+                break;
+        }
+        this.price += sizePrice;
+    }
+
+    public void addExtraCheese() {
+        isExtraCheeseAdded = true;
+        this.price += extraCheesePrice;
+    }
+
+    public void addExtraToppings() {
+        isExtraToppingsAdded = true;
+        this.price += extraToppings;
+    }
+
+    public void takeAway() {
+        isOptedForTakeAway = true;
+        this.price += bagPack;
+    }
+
+    public void getBill() {
+        StringBuilder bill = new StringBuilder();
+        bill.append("======= PIZZA BILL =======\n");
+        bill.append(String.format("%-20s: %s\n", "Pizza Type", veg ? "Veg" : "Non-Veg"));
+        bill.append(String.format("%-20s: %d\n", "Base Price", basePizzaPrice));
+        bill.append(String.format("%-20s: +%d\n", "Size (" + size + ")", sizePrice));
+
+        if (isExtraCheeseAdded) {
+            bill.append(String.format("%-20s: +%d\n", "Extra Cheese", extraCheesePrice));
+        }
+        if (isExtraToppingsAdded) {
+            bill.append(String.format("%-20s: +%d\n", "Extra Toppings", extraToppings));
+        }
+        if (isOptedForTakeAway) {
+            bill.append(String.format("%-20s: +%d\n", "Takeaway Charge", bagPack));
+        }
+
+        // Apply discount if applicable
+        if (price > DISCOUNT_THRESHOLD) {
+            bill.append(String.format("%-20s: -%d\n", "Discount Applied", DISCOUNT_AMOUNT));
+            price -= DISCOUNT_AMOUNT;
+        }
+
+        bill.append("---------------------------\n");
+        bill.append(String.format("%-20s: %d\n", "Total Bill", price));
+        bill.append("===========================\n");
+        System.out.println(bill);
+    }
+}
+
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class PizzaBillingSystem {
+
+    public static class Pizza {
+        private int price;
+        private boolean veg;
+        private boolean isExtraCheeseAdded = false;
+        private boolean isExtraToppingsAdded = false;
+        private boolean isOptedForTakeAway = false;
+        private int extraCheesePrice = 100;
+        private int extraToppings = 150;
+        private int bagPack = 20;
+        private int basePizzaPrice;
+        private int sizePrice = 0;
+
+        public enum Size {
+            SMALL, MEDIUM, LARGE
+        }
+
+        private Size size;
+
+        public Pizza(boolean veg, Size size) {
+            this.veg = veg;
+            this.size = size;
+            if (this.veg) {
+                this.price = 300;
+            } else {
+                this.price = 400;
+            }
+            this.basePizzaPrice = this.price;
+            setSizePrice(size);
+        }
+
+        private void setSizePrice(Size size) {
+            switch (size) {
+                case SMALL:
+                    sizePrice = 0;
+                    break;
+                case MEDIUM:
+                    sizePrice = 50;
+                    break;
+                case LARGE:
+                    sizePrice = 100;
+                    break;
+            }
+            this.price += sizePrice;
+        }
+
+        public void addExtraCheese() {
+            isExtraCheeseAdded = true;
+            this.price += extraCheesePrice;
+        }
+
+        public void addExtraToppings() {
+            isExtraToppingsAdded = true;
+            this.price += extraToppings;
+        }
+
+        public void takeAway() {
+            isOptedForTakeAway = true;
+            this.price += bagPack;
+        }
+
+        public int getPrice() {
+            return this.price;
+        }
+
+        public void getBill() {
+            System.out.printf("Pizza Type: %s\nBase Price: %d\nSize (%s): +%d\n",
+                    veg ? "Veg" : "Non-Veg", basePizzaPrice, size, sizePrice);
+            if (isExtraCheeseAdded)
+                System.out.printf("Extra Cheese: +%d\n", extraCheesePrice);
+            if (isExtraToppingsAdded)
+                System.out.printf("Extra Toppings: +%d\n", extraToppings);
+            if (isOptedForTakeAway)
+                System.out.printf("Takeaway Charge: +%d\n", bagPack);
+            System.out.printf("Total Bill: %d\n", price);
+        }
+    }
+
+    public static class Order {
+        private ArrayList<Pizza> pizzas;
+        private String customerName;
+        private String contactInfo;
+
+        public Order(String customerName, String contactInfo) {
+            this.pizzas = new ArrayList<>();
+            this.customerName = customerName;
+            this.contactInfo = contactInfo;
+        }
+
+        public void addPizza(Pizza pizza) {
+            pizzas.add(pizza);
+        }
+
+        public void finalizeBill() {
+            System.out.println("===== Final Bill =====");
+            System.out.printf("Customer Name: %s\nContact Info: %s\n", customerName, contactInfo);
+
+            int totalAmount = 0;
+            for (int i = 0; i < pizzas.size(); i++) {
+                System.out.printf("\nPizza %d:\n", i + 1);
+                pizzas.get(i).getBill();
+                totalAmount += pizzas.get(i).getPrice();
+            }
+
+            if (totalAmount > 1000) {
+                int discount = (int) (totalAmount * 0.1);
+                System.out.printf("Discount Applied: -%d\n", discount);
+                totalAmount -= discount;
+            }
+
+            System.out.printf("Final Amount Payable: %d\n", totalAmount);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter customer name: ");
+        String customerName = sc.nextLine();
+
+        System.out.print("Enter contact information: ");
+        String contactInfo = sc.nextLine();
+
+        Order order = new Order(customerName, contactInfo);
+
+        while (true) {
+            System.out.print("Choose pizza type (Veg: 1, Non-Veg: 2): ");
+            boolean isVeg = sc.nextInt() == 1;
+
+            System.out.print("Choose size (Small: 1, Medium: 2, Large: 3): ");
+            Pizza.Size size;
+            switch (sc.nextInt()) {
+                case 1:
+                    size = Pizza.Size.SMALL;
+                    break;
+                case 2:
+                    size = Pizza.Size.MEDIUM;
+                    break;
+                case 3:
+                    size = Pizza.Size.LARGE;
+                    break;
+                default:
+                    System.out.println("Invalid size! Defaulting to Small.");
+                    size = Pizza.Size.SMALL;
+                    break;
+            }
+
+            Pizza pizza = new Pizza(isVeg, size);
+
+            System.out.print("Add extra cheese? (Yes: 1, No: 2): ");
+            if (sc.nextInt() == 1)
+                pizza.addExtraCheese();
+
+            System.out.print("Add extra toppings? (Yes: 1, No: 2): ");
+            if (sc.nextInt() == 1)
+                pizza.addExtraToppings();
+
+            System.out.print("Opt for takeaway? (Yes: 1, No: 2): ");
+            if (sc.nextInt() == 1)
+                pizza.takeAway();
+
+            order.addPizza(pizza);
+
+            System.out.print("Add another pizza? (Yes: 1, No: 2): ");
+            if (sc.nextInt() != 1)
+                break;
+        }
+
+        order.finalizeBill();
+        sc.close();
+    }
+}
